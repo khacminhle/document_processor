@@ -1,12 +1,12 @@
 from pathlib import Path, PurePosixPath
-from pydantic import BaseModel, FilePath, ValidationError
 import os
 import logging
+from typing import Callable, Iterable
 
 # Can configure different level to output logging
 logging.basicConfig(level=logging.INFO)
 
-def load_novel_in_md(path: str) -> str:
+def load_document_file(path: str) -> str:
   
   """
   Read .md and .txt file and return string of text
@@ -29,10 +29,15 @@ def load_novel_in_md(path: str) -> str:
       return path
     raise NotImplementedError("Only support .md and .txt files")
 
-  def run_checks(path: str, check_list: list[function]):
+  def run_checks(path: str, check_list: Iterable[Callable[[str], str]]):
+    
+    # Look at the  type hint for check list, 
+    # we can clearly read that its a an iterable (so list, or tuple)
+    # that's callable and takes str as input argument and return str
     for check in check_list: 
       path = check(path)
     return path  
+
 
   def check_file_empty(path: str):
     
@@ -53,7 +58,7 @@ def load_novel_in_md(path: str) -> str:
   logging.info("Checks completed, proceeding to open file")
   
   if result:
-    with open(path, "r") as f: 
+    with open(path, "r", encoding="utf-8") as f: 
       result = f.read()
       logging.info("File is opened")
 
@@ -68,7 +73,7 @@ if __name__ == "__main__":
   empty_novel = "data/sample/empty.txt"
   broken_path = "hello" 
   
-  result = load_novel_in_md(empty_novel)
+  result = load_document_file(empty_novel)
   print(result)
 
   

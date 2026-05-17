@@ -1,23 +1,13 @@
-from doc_processor.loader import load_novel_in_md
+from doc_processor.loader import load_document_file
 import pytest
 
-"""
-Terminology 
-- Assert means that the output must equal to this output
-"""
-
-"""
-Create a tmp directory
-with tmp files 
-
-And test if its able to read it or raise exception
-"""
+# Test variables
 md_book = "Sample md book"
 txt_book = "Sample txt book"
 pdf_book = "Sample pdf book"
 
-def test_reading_md_txt_files(tmp_path): 
-  
+def test_loader_md_file(tmp_path): 
+
   tmp_dir = tmp_path / "sub" # sub here means subdirectory
   tmp_dir.mkdir() # Make dir out of this temp path
 
@@ -27,32 +17,32 @@ def test_reading_md_txt_files(tmp_path):
   tmp_md_file = tmp_dir / "test_book.md" # File path
   tmp_md_file.write_text(md_book, encoding="utf-8") 
 
-  # Create txt file 
+  assert load_document_file(tmp_md_file) == md_book
+
+  
+def test_loader_txt_file(tmp_path):
+  
+  # Create txt file
+  tmp_dir = tmp_path / "sub" # sub here means subdirectory
+  tmp_dir.mkdir()
+
   tmp_txt_file = tmp_dir / "test_book.txt" 
   tmp_txt_file.write_text(txt_book, encoding="utf-8")
+  
+  assert load_document_file(tmp_txt_file) == txt_book
 
-  # Create pdf file =
-  from fpdf import FPDF
+def test_loader_pdf_file(tmp_path): 
 
-  tmp_pdf_file = tmp_dir / "test_book.pdf" # File path
-
-  pdf = FPDF()
-  pdf.add_page()
-  pdf.set_font('helvetica', size=12)
-
-  pdf.cell(text=pdf_book)
-  pdf.output(tmp_pdf_file)
-
-
-
-  # Test loader to read file path and validate if loader able to read content
-  assert load_novel_in_md(tmp_md_file) == md_book
-  assert load_novel_in_md(tmp_txt_file) == txt_book
+  # Create pdf file
+  tmp_dir = tmp_path / "sub" # sub here means subdirectory
+  tmp_dir.mkdir()
+  
+  tmp_pdf_file = tmp_dir / "test_book.pdf"
+  tmp_pdf_file.write_text(pdf_book, encoding="utf-8")
 
   # Reading pdf file should raise an exception
   with pytest.raises(NotImplementedError):
-    load_novel_in_md(tmp_pdf_file)
-
+    load_document_file(tmp_pdf_file) 
   
 
 
