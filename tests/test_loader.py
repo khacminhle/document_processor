@@ -1,4 +1,4 @@
-from doc_processor.loader import load_document_file
+from doc_processor.loader import load_document
 import pytest
 
 # Test variables
@@ -17,7 +17,7 @@ def test_loader_md_file(tmp_path):
   tmp_md_file = tmp_dir / "test_book.md" # File path
   tmp_md_file.write_text(md_book, encoding="utf-8") 
 
-  assert load_document_file(tmp_md_file) == md_book
+  assert load_document(tmp_md_file) == md_book
 
   
 def test_loader_txt_file(tmp_path):
@@ -29,7 +29,7 @@ def test_loader_txt_file(tmp_path):
   tmp_txt_file = tmp_dir / "test_book.txt" 
   tmp_txt_file.write_text(txt_book, encoding="utf-8")
   
-  assert load_document_file(tmp_txt_file) == txt_book
+  assert load_document(tmp_txt_file) == txt_book
 
 def test_loader_pdf_file(tmp_path): 
 
@@ -42,7 +42,7 @@ def test_loader_pdf_file(tmp_path):
 
   # Reading pdf file should raise an exception
   with pytest.raises(NotImplementedError):
-    load_document_file(tmp_pdf_file) 
+    load_document(tmp_pdf_file) 
   
 
 

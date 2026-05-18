@@ -1,7 +1,7 @@
-# The City That Remembered Rain
-
-*A fiction novel by Minh Le*
-
+---
+title: The City That Remembered Rain
+author: Minh Le
+genre: fiction
 ---
 
 ## Table of Contents

@@ -4,9 +4,9 @@ import logging
 from typing import Callable, Iterable
 
 # Can configure different level to output logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 
-def load_document_file(path: str) -> str:
+def load_document(path: str) -> str:
   
   """
   Read .md and .txt file and return string of text
@@ -73,7 +73,7 @@ if __name__ == "__main__":
   empty_novel = "data/sample/empty.txt"
   broken_path = "hello" 
   
-  result = load_document_file(empty_novel)
+  result = load_document(empty_novel)
   print(result)
 
   
