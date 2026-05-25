@@ -2,42 +2,8 @@ from .loader import load_document
 import re
 import spacy
 
-chunking_research = "https://www.geeksforgeeks.org/data-analysis/how-to-chunk-text-data-a-comparative-analysis/"
+def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int) -> list[str]:
 
-city_that_remembered_rain = "data/sample/the_city_that_remembered_rain.md"
-the_library_at_the_edge_of_tomorrow = "data/sample/the_library_at_the_edge_of_tomorrow.txt"
-the_lantern_archive_novel = "data/sample/the_lantern_archive_novel.pdf"
-empty_novel = "data/sample/empty.txt"
-broken_path = "hello"
-sample_text = """
-# Project Alpha Report
-
-## Executive Summary
-
-Project Alpha is designed to process mixed-format documents and split them into semantically useful chunks. The system should preserve important structure while avoiding chunks that are too large for downstream embedding models.
-
-This paragraph is intentionally a little longer. It contains multiple sentences, related ideas, and enough length to test whether the chunker prefers splitting at paragraph or sentence boundaries before falling back to smaller separators. Ideally, this entire paragraph should remain together unless the configured chunk size forces a split.
-
-## Requirements
-
-The chunker should support:
-
-- Markdown headings
-- Paragraph boundaries
-- Bullet lists
-- Numbered lists
-- Code blocks
-- Very long sentences
-- Short isolated lines
-
-1. First, the document is loaded.
-2. Then metadata is extracted.
-3. After that, the text is recursively split.
-4. Finally, chunks are emitted with source references.
-"""
-
-
-def fix_sized_text_chunk(text: str, chunk_size: int) -> list[str]:
   
   """
   Divides text into pre-defined chunked size
@@ -50,16 +16,17 @@ def fix_sized_text_chunk(text: str, chunk_size: int) -> list[str]:
     - List of chunked size
   """
 
-  # String are immutable
-  chunked_text = []
-
-  while len(text) > 0: 
-    
-    sliced_text = text[:chunk_size] # Get first chunk
-    chunked_text.append(sliced_text) # Add them into chunked list
-    text = text[chunk_size:] # Remove the first chunk and update to the text
+  def word_splitter(text: str) -> list[str]: 
+     word_splits = re.split(r'\s+', text)
+     return word_splits
   
-  return chunked_text
+  word_splits = word_splitter(text)
+  text_chunks = []
+  for i in range(0, len(word_splits), chunk_size): 
+     chunk = word_splits[max(i - chunk_overlap, 0): chunk_size + i]
+     text_chunks.append(" ".join(chunk))
+
+  return text_chunks 
 
 def split_sentences_punctuation(text):
     """
@@ -135,21 +102,14 @@ def recursive_chunk(text: str, max_size:int, level=0) -> str:
          final_chunks.append(chunk)
 
     return final_chunks
-         
 
 if __name__ == "__main__":
+   doc_file_path = "data/sample/the_city_that_remembered_rain.md"
+   text = load_document(doc_file_path)
+   
+   for i, chunk in enumerate(fixed_text_chunk_with_overlap(text, chunk_size=50, chunk_overlap=5)):
+      print(f"Chunk {i}\n: {chunk}")
 
-  text = (
-    "Recursive chunking divides the text hierarchically using a set of separators. "
-    "If the initial chunks are too large, the method recursively splits them until "
-    "the desired size is achieved. This technique is useful for processing large "
-    "texts where simpler chunking methods may fail. Let's see how it works.")
-  chunks = recursive_chunk(text, max_size=100)
-  print(chunks)
-  for i, chunk in enumerate(chunks): 
-     print(f"Chunk{i + 1}:\n{chunk}\n")
-
-  
 
   
   
