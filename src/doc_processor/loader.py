@@ -6,11 +6,12 @@ from typing import Callable, Iterable
 # Can configure different level to output logging
 logging.basicConfig(level=logging.WARNING)
 
-def load_document(path: str) -> str:
+def load_document(path: str) -> dict:
   
   """
   Read .md and .txt file and return string of text
   """
+  document_data = {}
 
   def check_path_is_file(path: str):
     
@@ -23,9 +24,10 @@ def load_document(path: str) -> str:
     
   def check_for_supported_filetypes(path: str):
 
+    "Check if the file is supported"
+
     supported_files = (".md", ".txt")
- 
-    if PurePosixPath(path).suffix in supported_files: 
+    if PurePosixPath(path).suffix in supported_files:
       return path
     raise NotImplementedError("Only support .md and .txt files")
 
@@ -40,7 +42,9 @@ def load_document(path: str) -> str:
 
 
   def check_file_empty(path: str):
-    
+
+    "Check if the file empty"
+
     file_stats = os.stat(path)
     if not file_stats.st_size :
       raise ValueError("The file is empty")
@@ -56,13 +60,25 @@ def load_document(path: str) -> str:
 
   # If result passed then read the files
   logging.info("Checks completed, proceeding to open file")
+
+  # Read the file 
+  document_data = {}
   
   if result:
     with open(path, "r", encoding="utf-8") as f: 
+      
       result = f.read()
-      logging.info("File is opened")
 
-    return result
+      # Checks have been completed prior, data should be available
+      document_data["content"] = result
+      document_data["file_name"] = Path(path).name
+      document_data["file_extension"] = PurePosixPath(path).suffix
+      document_data["word_count"] = len(result.split())
+      document_data["line_count"] = len(result.splitlines())
+
+
+    
+    return document_data
 
 
 if __name__ == "__main__":
@@ -73,7 +89,7 @@ if __name__ == "__main__":
   empty_novel = "data/sample/empty.txt"
   broken_path = "hello" 
   
-  result = load_document(empty_novel)
-  print(result)
+  result = load_document(city_that_remembered_rain)
+  print(result["file_name"])
 
   
