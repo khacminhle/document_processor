@@ -9,9 +9,10 @@ logging.basicConfig(level=logging.WARNING)
 def load_document(path: str) -> dict:
   
   """
-  Read .md and .txt file and return string of text
+  Read .md and .txt file and return a dictionary
+  containing the content and metadata
   """
-  document_data = {}
+  
 
   def check_path_is_file(path: str):
     
@@ -90,6 +91,6 @@ if __name__ == "__main__":
   broken_path = "hello" 
   
   result = load_document(city_that_remembered_rain)
-  print(result["file_name"])
+  print(result)
 
   
