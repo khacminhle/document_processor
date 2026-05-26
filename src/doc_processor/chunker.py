@@ -2,7 +2,7 @@ from .loader import load_document
 import re
 import spacy
 
-def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int) -> list[str]:
+def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int) -> list[dict]:
 
   
   """
@@ -22,9 +22,18 @@ def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int
   
   word_splits = word_splitter(text)
   text_chunks = []
-  for i in range(0, len(word_splits), chunk_size): 
+  for i in range(0, len(word_splits), chunk_size):
      chunk = word_splits[max(i - chunk_overlap, 0): chunk_size + i]
-     text_chunks.append(" ".join(chunk))
+     word_concat = " ".join(chunk) # Join word together
+     char_count = len(word_concat) # char count
+     
+     text_chunks.append(
+        {
+           "chunk_id": i, 
+           "text": word_concat, 
+           "char_count": char_count
+        }
+     )
 
   return text_chunks 
 
@@ -106,9 +115,9 @@ def recursive_chunk(text: str, max_size:int, level=0) -> str:
 if __name__ == "__main__":
    doc_file_path = "data/sample/the_city_that_remembered_rain.md"
    text = load_document(doc_file_path)
-   
-   for i, chunk in enumerate(fixed_text_chunk_with_overlap(text, chunk_size=50, chunk_overlap=5)):
-      print(f"Chunk {i}\n: {chunk}")
+   print(text["content"])
+   chunks = fixed_text_chunk_with_overlap(text["content"], chunk_size=100, chunk_overlap=20)
+   print(chunks)
 
 
   
