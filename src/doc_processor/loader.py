@@ -2,6 +2,7 @@ from pathlib import Path, PurePosixPath
 import os
 import logging
 from typing import Callable, Iterable
+from .config import SUPPORTED_VERSION
 
 # Can configure different level to output logging
 logging.basicConfig(level=logging.WARNING)
@@ -27,10 +28,11 @@ def load_document(path: str) -> dict:
 
     "Check if the file is supported"
 
-    supported_files = (".md", ".txt")
+    supported_files = SUPPORTED_VERSION
+
     if PurePosixPath(path).suffix in supported_files:
       return path
-    raise NotImplementedError("Only support .md and .txt files")
+    raise NotImplementedError("File type is not supported in this version")
 
   def run_checks(path: str, check_list: Iterable[Callable[[str], str]]):
     
