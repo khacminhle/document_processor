@@ -78,9 +78,7 @@ def load_document(path: str) -> dict:
       document_data["file_extension"] = PurePosixPath(path).suffix
       document_data["word_count"] = len(result.split())
       document_data["line_count"] = len(result.splitlines())
-
-
-    
+      
     return document_data
 
 
