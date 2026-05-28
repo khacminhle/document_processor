@@ -1,11 +1,8 @@
 from pathlib import Path, PurePosixPath
 import os
-import logging
 from typing import Callable, Iterable
 from .config import SUPPORTED_VERSION
 
-# Can configure different level to output logging
-logging.basicConfig(level=logging.WARNING)
 
 def load_document(path: str) -> dict:
   
@@ -58,11 +55,7 @@ def load_document(path: str) -> dict:
                 check_for_supported_filetypes, 
                 check_file_empty]
 
-  logging.info("Run checks to validate file path")
   result = run_checks(path, check_list)
-
-  # If result passed then read the files
-  logging.info("Checks completed, proceeding to open file")
 
   # Read the file 
   document_data = {}
