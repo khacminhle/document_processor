@@ -9,6 +9,23 @@ def load_document(path: str) -> dict:
   """
   Read .md and .txt file and return a dictionary
   containing the content and metadata
+
+  Args: 
+    path: Path to the document file
+
+  Returns:
+    A dictionary containing:
+
+      content: The full text content of the file.
+      file_name: The file name, without extension.
+      file_extension: The file extension, such as ".md" or ".txt".
+      word_count: Number of words in the document.
+      line_count: Number of lines in the document.
+
+  Raises:
+    TypeError: If path does not point to a valid file.
+    NotImplementedError: If the file extension is unsupported.
+    ValueError: If the file is empty.
   """
   
 
@@ -67,7 +84,7 @@ def load_document(path: str) -> dict:
 
       # Checks have been completed prior, data should be available
       document_data["content"] = result
-      document_data["file_name"] = Path(path).name
+      document_data["file_name"] = Path(path).stem
       document_data["file_extension"] = PurePosixPath(path).suffix
       document_data["word_count"] = len(result.split())
       document_data["line_count"] = len(result.splitlines())

@@ -22,14 +22,19 @@ def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int
   
   word_splits = word_splitter(text)
   text_chunks = []
+  counter = 0 # Use this for chunk id
   for i in range(0, len(word_splits), chunk_size):
+     
+     counter += 1 # Increase counter
+
+     # Chunking process
      chunk = word_splits[max(i - chunk_overlap, 0): chunk_size + i]
      word_concat = " ".join(chunk) # Join word together
      char_count = len(word_concat) # char count
      
      text_chunks.append(
         {
-           "chunk_id": i, 
+           "chunk_id": counter, 
            "text": word_concat, 
            "char_count": char_count
         }
