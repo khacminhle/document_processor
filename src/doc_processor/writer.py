@@ -12,7 +12,7 @@ class TextChunks(BaseModel):
   metadata: dict
   chunks: list[Chunk]
 
-def save_json(data: dict, target_path: str, extension: str = ".json"):
+def save_json_local(data: dict, target_path: str, extension: str = ".json"):
   
   """
   Write data dictionary to a folder
@@ -59,7 +59,8 @@ def save_json(data: dict, target_path: str, extension: str = ".json"):
   except FileNotFoundError:
     print(f"Error: The folder {folder_path} does not exist.")
 
- 
+
+  
 
 if __name__ == "__main__": 
    
@@ -69,7 +70,7 @@ if __name__ == "__main__":
   path_string = output_folder + file_name + extension
   full_path = Path(path_string)
   
-  save_json(target_path=full_path)
+  save_json_local(target_path=full_path)
 
   
 
