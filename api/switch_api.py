@@ -3,7 +3,7 @@ import sys
 import os
 
 def run_api():
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
 
 def stop_api():
     os._exit(0)
