@@ -1,6 +1,6 @@
 import datetime
 from fastapi import FastAPI, File, UploadFile
-from src.services.ingestion import process_document
+from services.ingestion import process_document
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
@@ -15,7 +15,7 @@ def health_check():
 
 @app.post("/upload-document")
 async def upload_document_file(file: UploadFile = File(...)):
-    
+
     processed_document_chunks = await process_document(file)
    
     return JSONResponse(content=processed_document_chunks)

@@ -45,6 +45,7 @@ async def load_document(file_obj):
   # Read the file content
   content = await file_obj.read() #file_obj is a co routine, we gotta await it
   content = content.decode("utf-8")
+
   # Check if the file is empty
   if not content:
       raise ValueError("The file is empty")
