@@ -1,7 +1,7 @@
 # Specific project file 
 reusable_commands.md
 scratch_code/
-
+data/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
