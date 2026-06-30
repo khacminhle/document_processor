@@ -1,49 +1,75 @@
-from doc_processor.loader import load_document
 import pytest
+from doc_processor.loader import load_document
+import asyncio
 
-# Test variables
-md_book = "Sample md book"
-txt_book = "Sample txt book"
-pdf_book = "Sample pdf book"
+class FakeUploadFile:
 
-def test_loader_md_file(tmp_path): 
+  def __init__(self, file_name, content):
+    self.filename = file_name
+    self._content = content
 
-  tmp_dir = tmp_path / "sub" # sub here means subdirectory
-  tmp_dir.mkdir() # Make dir out of this temp path
+  async def read(self):
+    return self._content
 
-  # Temporarily create test file
-  
-  # Create md file
-  tmp_md_file = tmp_dir / "test_book.md" # File path
-  tmp_md_file.write_text(md_book, encoding="utf-8") 
+# Test whether the load function can return expected data
+@pytest.mark.asyncio
+async def test_load_document_func_happy_path():
 
-  assert load_document(tmp_md_file) == md_book
+  # Set up pytest for happy path
+  file_name = "fake_document.md"
+  content = "This is a fake document used for testing".encode("utf-8")
 
-  
-def test_loader_txt_file(tmp_path):
-  
-  # Create txt file
-  tmp_dir = tmp_path / "sub" # sub here means subdirectory
-  tmp_dir.mkdir()
+  fake_upload_file = FakeUploadFile(file_name=file_name, content=content)
 
-  tmp_txt_file = tmp_dir / "test_book.txt" 
-  tmp_txt_file.write_text(txt_book, encoding="utf-8")
-  
-  assert load_document(tmp_txt_file) == txt_book
+  test_data = await load_document(fake_upload_file)
 
-def test_loader_pdf_file(tmp_path): 
+  assert test_data["content"] == "This is a fake document used for testing"
+  assert test_data["file_name"] == "fake_document"
+  assert test_data["file_extension"] == ".md"
+  assert test_data["word_count"] == 8
+  assert test_data["line_count"] == 1
 
-  # Create pdf file
-  tmp_dir = tmp_path / "sub" # sub here means subdirectory
-  tmp_dir.mkdir()
-  
-  tmp_pdf_file = tmp_dir / "test_book.pdf"
-  tmp_pdf_file.write_text(pdf_book, encoding="utf-8")
+# Test whether load function can raise TypeError when receiving abnormal object
+@pytest.mark.asyncio
+async def test_load_document_func_type_error():
+  with pytest.raises(TypeError, match="Invalid file object provided"):
+    await load_document(object())
 
-  # Reading pdf file should raise an exception
-  with pytest.raises(NotImplementedError):
-    load_document(tmp_pdf_file) 
-  
+# Test whether load function can raise NotImplementedError 
+# when receiving unsupported file 
+@pytest.mark.asyncio
+async def test_load_document_func_not_implemented_error():
+  file_name = "fake_document.docx"
+  content = "This is a fake document used for testing".encode("utf-8")
+  fake_upload_file = FakeUploadFile(file_name=file_name, content=content)
+
+  with pytest.raises(NotImplementedError, match="File type is not supported in this version"):
+    await load_document(fake_upload_file)
+
+
+# Test whether load function reject empty files 
+@pytest.mark.asyncio
+async def test_load_document_func_reject_empty_file():
+  file_name = "fake_document.md"
+  content = "".encode("utf-8")
+  fake_upload_file = FakeUploadFile(file_name=file_name, content=content)
+
+  with pytest.raises(ValueError, match="The file is empty"):
+    await load_document(fake_upload_file)
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
 
 
 
