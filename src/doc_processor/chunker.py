@@ -1,10 +1,15 @@
 from .loader import load_document
 import re
 import spacy
+import logging 
+
+# Initialise logging
+logger = logging.getLogger(__name__)
+nlp = spacy.load('en_core_web_sm') # Load sentences splitting model
 
 def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int) -> list[dict]:
 
-  
+
   """
   Divides text into pre-defined chunked size
 
@@ -15,14 +20,26 @@ def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int
   Return: 
     - List of chunked size
   """
-
+   
   def word_splitter(text: str) -> list[str]: 
      word_splits = re.split(r'\s+', text)
      return word_splits
   
+  # Raise exception if chunk overlap is bigger than chunk size 
+  if chunk_size < 0 or chunk_overlap < 0: 
+     raise ValueError(f"Chunk size and chunk overlap must be greater than 0")
+  if not isinstance(chunk_size, int) or not isinstance(chunk_overlap, int): 
+     raise TypeError(f"Incorrect input type for chunk size and chunk overlap")
+  
+
+  # Split words
+  logger.info(f"Splitting content: {text[:30]}..")
   word_splits = word_splitter(text)
   text_chunks = []
   counter = 0 # Use this for chunk id
+  
+  # Start chunking process
+  logger.info("Starting chunking process")
   for i in range(0, len(word_splits), chunk_size):
      
      counter += 1 # Increase counter
@@ -40,6 +57,8 @@ def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int
         }
      )
 
+  total_chunks = len(text_chunks) 
+  logger.info(f"Chunked {total_chunks}")
   return text_chunks 
 
 def split_sentences_punctuation(text):
@@ -69,7 +88,6 @@ def split_sentences_spacy(text: str) -> list[str]:
 
     chunked_text = []
     # Load SpaCy's English model
-    nlp = spacy.load('en_core_web_sm')
     
     # Process the text
     doc = nlp(text)

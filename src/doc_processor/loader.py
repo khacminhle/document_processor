@@ -1,6 +1,8 @@
 from pathlib import Path, PurePosixPath
-from typing import Callable, Iterable, Any
 from .config import SUPPORTED_VERSION
+import logging 
+
+logger = logging.getLogger(__name__)
 
 supported_files = SUPPORTED_VERSION
 
@@ -33,23 +35,34 @@ async def load_document(file_obj):
   ValueError: If the file is empty.
   """
   
+  logger.info("Document process started")
   # Check if the file object is valid
   if not hasattr(file_obj, 'read'):
+      logger.info("Processed invalid file object")
       raise TypeError("Invalid file object provided")
 
+  
+  logger.info("Checking if file type is supported")
   # Check if file is supported
   file_extension = PurePosixPath(file_obj.filename).suffix 
   if file_extension not in supported_files:
-    raise NotImplementedError("File type is not supported in this version")
+    logger.warning(f"{file_extension} not supported i")
+    raise NotImplementedError(f"{file_extension} is not supported")
 
+  
+  logger.info("Reading file content")
   # Read the file content
   content = await file_obj.read() #file_obj is a co routine, we gotta await it
   content = content.decode("utf-8")
 
+
+  logger.info("Checking if file content is not empty")
   # Check if the file is empty
   if not content:
-      raise ValueError("The file is empty")
+    logger.warning("File is empty")
+    raise ValueError("The file is empty")
 
+  logger.info("Preparing file content data")
   # Prepare the result dictionary
   document_data = {
       "content": content,
@@ -58,6 +71,9 @@ async def load_document(file_obj):
       "word_count": len(content.split()),
       "line_count": len(content.splitlines())
   }
+
+
+  logger.info(f"Loaded document name: {document_data["file_name"]}, total of {document_data["word_count"]} words, {document_data["line_count"]} lines")
 
   return document_data
 

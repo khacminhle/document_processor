@@ -1,7 +1,6 @@
 from pathlib import Path
 import json
 from pydantic import BaseModel, ValidationError
-import pprint
 
 class Chunk(BaseModel):
   chunk_id: int 
@@ -59,8 +58,6 @@ def save_json_local(data: dict, target_path: str, extension: str = ".json"):
   except FileNotFoundError:
     print(f"Error: The folder {folder_path} does not exist.")
 
-
-  
 
 if __name__ == "__main__": 
    
