@@ -1,6 +1,5 @@
 import pytest
 from doc_processor.loader import load_document
-import asyncio
 
 class FakeUploadFile:
 
@@ -43,7 +42,7 @@ async def test_load_document_func_not_implemented_error():
   content = "This is a fake document used for testing".encode("utf-8")
   fake_upload_file = FakeUploadFile(file_name=file_name, content=content)
 
-  with pytest.raises(NotImplementedError, match="File type is not supported in this version"):
+  with pytest.raises(NotImplementedError, match=r"\.docx is not supported"):
     await load_document(fake_upload_file)
 
 
