@@ -1,7 +1,7 @@
-from src.doc_processor.loader import load_document
-from src.doc_processor.metadata import extract_metadata
-from src.doc_processor.chunker import fixed_text_chunk_with_overlap
-from src.doc_processor.config import DEFAULT_CHUNK_SIZE, DEFAULT_OVERLAP
+from doc_processor.loader import load_document
+from doc_processor.metadata import extract_metadata
+from doc_processor.chunker import fixed_text_chunk_with_overlap
+from doc_processor.config import DEFAULT_CHUNK_SIZE, DEFAULT_OVERLAP
 from typing import Any
 import time
 import logging 
