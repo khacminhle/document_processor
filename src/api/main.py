@@ -16,7 +16,7 @@ def health_check():
     }
 
 
-@app.post("/upload-document")
+@app.post("/chunking-document")
 async def upload_document_file(file: UploadFile = File(...)):
     
     try:
