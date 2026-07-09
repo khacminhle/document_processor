@@ -1,4 +1,5 @@
 from pathlib import Path, PurePosixPath
+import asyncio
 from .config import SUPPORTED_VERSION
 import logging 
 
@@ -36,24 +37,28 @@ async def load_document(file_obj):
   """
   
   logger.info("Document process started")
-  # Check if the file object is valid
-  if not hasattr(file_obj, 'read'):
-      logger.info("Processed invalid file object")
-      raise TypeError("Invalid file object provided")
+  if hasattr(file_obj, "read"):
+      logger.info("Reading from uploaded file object")
+      if not hasattr(file_obj, "filename"):
+          logger.info("Processed invalid file object")
+          raise TypeError("Invalid file object provided")
 
+      file_name = Path(file_obj.filename).stem
+      file_extension = PurePosixPath(file_obj.filename).suffix
+      content = await file_obj.read()
+      content = content.decode("utf-8")
   
+  else:
+      path = Path(file_obj)
+      logger.info("Reading from local file path")
+      file_name = path.stem
+      file_extension = path.suffix
+      content = await asyncio.to_thread(path.read_text, encoding="utf-8")
+
   logger.info("Checking if file type is supported")
-  # Check if file is supported
-  file_extension = PurePosixPath(file_obj.filename).suffix 
   if file_extension not in supported_files:
-    logger.warning(f"{file_extension} not supported i")
+    logger.warning(f"{file_extension} not supported")
     raise NotImplementedError(f"{file_extension} is not supported")
-
-  
-  logger.info("Reading file content")
-  # Read the file content
-  content = await file_obj.read() #file_obj is a co routine, we gotta await it
-  content = content.decode("utf-8")
 
 
   logger.info("Checking if file content is not empty")
@@ -66,14 +71,19 @@ async def load_document(file_obj):
   # Prepare the result dictionary
   document_data = {
       "content": content,
-      "file_name": Path(file_obj.filename).stem,
+      "file_name": file_name,
       "file_extension": file_extension,
       "word_count": len(content.split()),
       "line_count": len(content.splitlines())
   }
 
 
-  logger.info(f"Loaded document name: {document_data["file_name"]}, total of {document_data["word_count"]} words, {document_data["line_count"]} lines")
+  logger.info(
+      "Loaded document name: %s, total of %s words, %s lines",
+      document_data["file_name"],
+      document_data["word_count"],
+      document_data["line_count"],
+  )
 
   return document_data
 

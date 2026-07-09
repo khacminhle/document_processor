@@ -1,4 +1,4 @@
-from .loader import load_document
+from doc_processor.loader import load_document
 import re
 import spacy
 import logging 
@@ -57,7 +57,7 @@ def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int
         }
      )
 
-  total_chunks = len(text_chunks) 
+  total_chunks = len(text_chunks) #Calculate total number of chunked text
   logger.info(f"Chunked {total_chunks}")
   return text_chunks 
 
@@ -112,7 +112,7 @@ def recursive_chunk(text: str, max_size:int, level=0) -> str:
     # If text is already smaller than max size
     # return it
     if len(text) <= (max_size):
-       return list[text]
+      return list[text]
     
     # Define separators for different levels of chunking
     separators = [r'(?<=[.!?]) +', r'\s+']  # Sentence level, word level
@@ -139,7 +139,8 @@ if __name__ == "__main__":
    doc_file_path = "data/sample/the_city_that_remembered_rain.md"
    text = load_document(doc_file_path)
    print(text["content"])
-   chunks = fixed_text_chunk_with_overlap(text["content"], chunk_size=100, chunk_overlap=20)
+   # chunks = fixed_text_chunk_with_overlap(text["content"], chunk_size=100, chunk_overlap=20)
+   chunks = recursive_chunk(text["content"], max_size=20)
    print(chunks)
 
 

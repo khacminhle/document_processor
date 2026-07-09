@@ -43,8 +43,6 @@ def save_json_local(data: dict, target_path: str, extension: str = ".json"):
     path = folder_path / f"{base_name}_copy_{counter}{extension}"
     counter += 1
 
-  print(path)
-
   # Write the data to the file again (this is redundant and may be a bug in the original code). This step is repeated unnecessarily and should be removed.
   try:
     with open(path, "w", encoding="utf-8") as file:
@@ -57,6 +55,8 @@ def save_json_local(data: dict, target_path: str, extension: str = ".json"):
   # Handle the case where the folder does not exist, even after the earlier check (unlikely, but included for robustness).
   except FileNotFoundError:
     print(f"Error: The folder {folder_path} does not exist.")
+
+  return path # Return the path of saved file
 
 
 if __name__ == "__main__": 
