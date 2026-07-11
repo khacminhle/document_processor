@@ -48,6 +48,7 @@ async def load_document(file_obj):
       content = await file_obj.read()
       content = content.decode("utf-8")
   
+  # Support CLI methid
   else:
       path = Path(file_obj)
       logger.info("Reading from local file path")

@@ -39,7 +39,7 @@ async def chunking_document(file_obj: Any) -> dict:
                                          chunk_size=DEFAULT_CHUNK_SIZE, 
                                          chunk_overlap=DEFAULT_OVERLAP)
   
-
+  
   data["chunks"] = chunks
 
   # End time 
