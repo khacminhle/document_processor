@@ -1,7 +1,9 @@
-from doc_processor.loader import load_document
+from pathlib import Path
+import asyncio
 import re
 import spacy
 import logging 
+from doc_processor.loader import load_document
 
 # Initialise logging
 logger = logging.getLogger(__name__)
@@ -85,18 +87,36 @@ def split_sentences_spacy(text: str) -> list[str]:
     Returns:
     list: A list of sentences.
     """
+    clean_text = text.replace("\n\n", " ").replace("\n", " ")
 
     chunked_text = []
     # Load SpaCy's English model
     
     # Process the text
-    doc = nlp(text)
-    
+    doc = nlp(clean_text)
+
     # Extract sentences
     chunked_text = [sentence for sentence in doc.sents]
     return chunked_text
 
-def recursive_chunk(text: str, max_size:int, level=0) -> str:
+def split_text_with_overlap(text: str, chunk_size: int, overlap: int):
+
+   def word_splitter(text: str): 
+      text_chunks = re.split(r'\s+', text)
+      return text_chunks 
+   
+   chunk_text = [] 
+   text_splits = word_splitter(text)
+
+   for i in range(0, len(text_splits), chunk_size):
+     chunk = text_splits[max(i - overlap, 0): chunk_size + i]
+     chunk_text.append(" ".join(chunk))
+
+   return chunk_text
+      
+
+
+def recursive_chunk_retired(text: str, max_size:int, level=0) -> str:
     """
     Recursively chunk the text into smaller parts using a set of separators.
     
@@ -119,34 +139,41 @@ def recursive_chunk(text: str, max_size:int, level=0) -> str:
 
     # Select the appropriate separator based on the recursion level
     separator = separators[min(level, len(separators) - 1)]
-    
     chunks = re.split(separator, text) # Return list [chunked]
-    
+
     final_chunks = []
     current_chunk = ""
+    
 
     for chunk in chunks: 
       if len(chunk) >= max_size:
          level += 1
-         current_chunk = recursive_chunk(chunk, max_size, level)
+         current_chunk = recursive_chunk_retired(chunk, max_size, level)
          final_chunks.extend(current_chunk)
       else:
          final_chunks.append(chunk)
 
     return final_chunks
 
-if __name__ == "__main__":
-   doc_file_path = "data/sample/the_city_that_remembered_rain.md"
-   text = load_document(doc_file_path)
-   print(text["content"])
+
+
+async def main() -> None:
+   doc_file_path = "data/sample/short_story_testing.md"
+   text = await load_document(doc_file_path)
+   
+   
    # chunks = fixed_text_chunk_with_overlap(text["content"], chunk_size=100, chunk_overlap=20)
-   chunks = recursive_chunk(text["content"], max_size=20)
-   print(chunks)
+   # chunks = split_sentences_spacy(text["content"])
+   chunks = split_text_with_overlap(text["content"], chunk_size=20, overlap=5)
+   print(chunks[0])
+   
+   
+if __name__ == "__main__":
+   asyncio.run(main())
 
 
   
   
   
   
-
 
