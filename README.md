@@ -1,8 +1,11 @@
 # document_processor
 
-A small Python service for turning text documents into structured JSON. It accepts Markdown (`.md`) and plain text (`.txt`) files, extracts basic metadata, splits the document into overlapping chunks, and returns the processed result.
+A small Python project for turning text documents into structured JSON. It accepts Markdown (`.md`) and plain text (`.txt`) files, extracts basic metadata, splits the document into overlapping chunks, and writes the processed result to disk.
 
-The main local entry point is a FastAPI app in `api/main.py`.
+There are two ways to use it locally:
+
+- a command-line interface in `cli.py`
+- a FastAPI app in `src/api/main.py`
 
 ## What it does
 
@@ -11,6 +14,53 @@ The main local entry point is a FastAPI app in `api/main.py`.
 - Extracts front matter fields such as `author` and `genre`
 - Splits text into word chunks using the defaults in `src/doc_processor/config.py`
 - Returns JSON containing `metadata` and `chunks`
+
+## CLI Usage
+
+The CLI processes a single local file and saves the structured JSON output under `data/output/`.
+
+### Install dependencies
+
+```bash
+uv sync
+```
+
+### Run the CLI
+
+```bash
+uv run python cli.py path/to/document.md
+```
+
+You can also pass a `.txt` file:
+
+```bash
+uv run python cli.py path/to/document.txt
+```
+
+### Supported input
+
+- `.md`
+- `.txt`
+
+### Output
+
+- The CLI writes a JSON file to `data/output/`.
+- The output filename is based on the input filename, for example `my_doc.json`.
+- If a file with the same name already exists, the CLI creates a copy with a suffix like `_copy_1`.
+
+### What the CLI includes in the JSON
+
+- `metadata`
+- `chunks`
+- `author` and `genre` extracted from front matter when present
+
+### Example
+
+```bash
+uv run python cli.py ./notes/example.md
+```
+
+This will print the saved JSON path after processing finishes.
 
 ## Requirements
 
@@ -67,6 +117,5 @@ uv run pytest
 
 ## Notes
 
-- Supported input files are `.md` and `.txt`.
 - Default chunking uses 10 words per chunk with a 2-word overlap.
-- The older `main.py` CLI is still present, but the current loader is designed around uploaded files for the API flow.
+- The CLI and API share the same document loading, metadata extraction, chunking, and JSON writing logic.
