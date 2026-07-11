@@ -63,7 +63,7 @@ def fixed_text_chunk_with_overlap(text: str, chunk_size: int, chunk_overlap: int
   logger.info(f"Chunked {total_chunks}")
   return text_chunks 
 
-def split_sentences_punctuation(text):
+def split_sentences_punctuation(text) -> list[str]:
     """
     Splits text into sentences using punctuation marks.
     
@@ -99,7 +99,7 @@ def split_sentences_spacy(text: str) -> list[str]:
     chunked_text = [sentence for sentence in doc.sents]
     return chunked_text
 
-def split_text_with_overlap(text: str, chunk_size: int, overlap: int):
+def split_text_with_overlap(text: str, chunk_size: int, overlap: int) -> list[str]:
 
    def word_splitter(text: str): 
       text_chunks = re.split(r'\s+', text)
@@ -114,8 +114,6 @@ def split_text_with_overlap(text: str, chunk_size: int, overlap: int):
 
    return chunk_text
       
-
-
 def recursive_chunk_retired(text: str, max_size:int, level=0) -> str:
     """
     Recursively chunk the text into smaller parts using a set of separators.
@@ -154,7 +152,6 @@ def recursive_chunk_retired(text: str, max_size:int, level=0) -> str:
          final_chunks.append(chunk)
 
     return final_chunks
-
 
 
 async def main() -> None:

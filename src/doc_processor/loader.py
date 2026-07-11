@@ -2,12 +2,22 @@ from pathlib import Path, PurePosixPath
 import asyncio
 from .config import SUPPORTED_VERSION
 import logging 
+from pydantic import BaseModel, ConfigDict
+from typing import TypedDict
+
 
 logger = logging.getLogger(__name__)
 
+class Document(TypedDict): 
+   content: str
+   file_name: str
+   file_extension: str
+   word_count: str
+   line_count: str
+
 supported_files = SUPPORTED_VERSION
 
-async def load_document(file_obj):
+async def load_document(file_obj) -> Document:
   
   """
   Read .md and .txt file from an uploaded file object and return a dictionary
@@ -69,15 +79,14 @@ async def load_document(file_obj):
     raise ValueError("The file is empty")
 
   logger.info("Preparing file content data")
-  # Prepare the result dictionary
-  document_data = {
-      "content": content,
-      "file_name": file_name,
-      "file_extension": file_extension,
-      "word_count": len(content.split()),
-      "line_count": len(content.splitlines())
-  }
 
+  document_data = Document(
+        file_name = file_name,
+        content = content, 
+        file_extension = file_extension,
+        word_count = len(content.split()),
+        line_count = len(content.splitlines())
+    )
 
   logger.info(
       "Loaded document name: %s, total of %s words, %s lines",
