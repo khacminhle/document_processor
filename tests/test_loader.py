@@ -31,7 +31,7 @@ async def test_load_document_func_happy_path():
 # Test whether load function can raise TypeError when receiving abnormal object
 @pytest.mark.asyncio
 async def test_load_document_func_type_error():
-  with pytest.raises(TypeError, match="Invalid file object provided"):
+  with pytest.raises(TypeError, match="Incorrect file object"):
     await load_document(object())
 
 # Test whether load function can raise NotImplementedError 
