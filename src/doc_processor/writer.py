@@ -23,11 +23,9 @@ def save_json_local(data: dict, target_path: str, extension: str = ".json"):
   """
 
   #  Check if data is valid 
-  try:
-    TextChunks(**data) # Validate data
-  except ValidationError as e:
-    raise e
   
+  TextChunks(**data) # Validate data
+ 
   path = Path(f"{target_path}{extension}")
 
   folder_path = path.parent
@@ -52,9 +50,6 @@ def save_json_local(data: dict, target_path: str, extension: str = ".json"):
   except FileNotFoundError:
     print(f"Error: The folder {folder_path} does not exist.")
 
-  # Handle the case where the folder does not exist, even after the earlier check (unlikely, but included for robustness).
-  except FileNotFoundError:
-    print(f"Error: The folder {folder_path} does not exist.")
 
   return path # Return the path of saved file
 

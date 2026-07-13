@@ -45,7 +45,8 @@ async def load_document(file_obj) -> Document:
   NotImplementedError: If the file extension is unsupported.
   ValueError: If the file is empty.
   """
-  
+
+  # Receive UploadFile from FastAPI
   logger.info("Document process started")
   if hasattr(file_obj, "read"):
       logger.info("Reading from uploaded file object")
@@ -58,13 +59,18 @@ async def load_document(file_obj) -> Document:
       content = await file_obj.read()
       content = content.decode("utf-8")
   
-  # Support CLI methid
+  # Support CLI method
   else:
-      path = Path(file_obj)
-      logger.info("Reading from local file path")
-      file_name = path.stem
-      file_extension = path.suffix
-      content = await asyncio.to_thread(path.read_text, encoding="utf-8")
+      try:
+        path = Path(file_obj)
+        logger.info("Reading from local file path")
+        file_name = path.stem
+        file_extension = path.suffix
+        content = await asyncio.to_thread(path.read_text, encoding="utf-8")
+
+      except: 
+        raise TypeError("Incorrect file object")
+
 
   logger.info("Checking if file type is supported")
   if file_extension not in supported_files:
