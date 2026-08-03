@@ -2,6 +2,11 @@
 reusable_commands.md
 scratch_code/
 data/
+.DS_Store
+ROADMAP.md
+to_do_list.md
+document_processor.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
