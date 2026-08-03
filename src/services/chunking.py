@@ -17,6 +17,8 @@ async def chunking_document(file_obj: Any) -> dict:
   
   # Read the file object
   document = await load_document(file_obj)
+  full_text = document["content"]
+
   logger.info("Document loaded")  
 
   
@@ -27,8 +29,10 @@ async def chunking_document(file_obj: Any) -> dict:
 
 
   logger.info("Preparing data for chunking algorithms")  
+
   # Extract file data except for content
-  data = {}  
+  data = {} 
+  data["full_text"] = full_text 
   file_metadata = {k: v for k, v in document.items() if k != "content"}
   data["metadata"] = file_metadata
   data["metadata"]["author"] = metadata.get("author", "")
@@ -41,6 +45,7 @@ async def chunking_document(file_obj: Any) -> dict:
   
   
   data["chunks"] = chunks
+ 
 
   # End time 
   end_time = time.perf_counter()
